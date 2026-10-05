@@ -1,0 +1,28 @@
+# Angular
+UI/**/node_modules/
+UI/**/.angular/
+UI/**/dist/
+
+# .NET
+API/**/bin/
+API/**/obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
+!*.env.example
+
+# Local development settings
+appsettings.Development.json
+
+# OS files
+.DS_Store
+Thumbs.db
