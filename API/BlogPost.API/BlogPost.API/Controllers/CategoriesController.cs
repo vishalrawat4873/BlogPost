@@ -17,17 +17,16 @@ namespace BlogPost.API.Controllers
         {
             _categoryRepository = categoryRepository;
         }
-
-
         [HttpPost]
         public async Task<IActionResult> CreateCategory(CreateCategoryRequest request)
         {
+            // Map Dto to Domain Model
             var category = new Category
             {
                 Name = request.Name,
                 UrlHandle = request.UrlHandle,
             };
-            await _categoryRepository.CreateCategory(category);
+            await _categoryRepository.CreateAsync(category);
             var response = new CategoryDto
             {
                 Id = category.Id,
@@ -38,19 +37,12 @@ namespace BlogPost.API.Controllers
             return Ok(response);
         }
 
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteCategory(Guid id)
-        //{
-        //    var category = await _dbContext.Categories.FindAsync(id);
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    _dbContext.Categories.Remove(category);
-        //    await _dbContext.SaveChangesAsync();
-        //    return Ok();
-
-        //}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCategory(Guid id)
+        {
+            await _categoryRepository.DeleteAsync(id);
+            return Ok();
+        }
 
 
     }

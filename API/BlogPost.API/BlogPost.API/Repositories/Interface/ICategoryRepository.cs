@@ -4,6 +4,7 @@ namespace BlogPost.API.Repositories.Interface
 {
     public interface ICategoryRepository
     {
-        Task<Category> CreateCategory(Category category);
+        Task<Category> CreateAsync(Category category);
+        Task<Category> DeleteAsync(Guid id);
     }
 }

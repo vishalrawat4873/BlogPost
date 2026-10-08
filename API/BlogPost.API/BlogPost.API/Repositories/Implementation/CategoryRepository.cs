@@ -14,12 +14,18 @@ namespace BlogPost.API.Repositories.Implementation
         {
             _dbContext = dbContext;
         }
-        public async Task<Category> CreateCategory(Category category)
+        public async Task<Category> CreateAsync(Category category)
         {
             await _dbContext.AddAsync(category);
             await _dbContext.SaveChangesAsync();
             return category;
-            
+        }
+        public async Task<Category> DeleteAsync(Guid id)
+        {
+           var category = await _dbContext.Categories.FindAsync(id);
+            _dbContext.Categories.Remove(category);
+            _dbContext.SaveChanges();
+            return category;
         }
     }
 }

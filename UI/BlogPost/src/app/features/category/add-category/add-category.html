@@ -1,70 +1,57 @@
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
+<div class="container">
+  <h1 class="mt-3">Add Category</h1>
+  <form [formGroup]="addCategoryFormGroup" (ngSubmit)="onSubmit()">
+    <div class="mt-3">
+      <div class="mt-3">
+        <label class="form-label" for="name">Name <span class="text-danger">*</span></label>
+        <input
+          id="name"
+          type="text"
+          class="form-control"
+          formControlName="name"
+          [class.is-invalid]="nameFormControl.touched && nameFormControl.invalid"
+        />
 
-            <h1 class="h3 mb-4">Add Category</h1>
+        @if (nameFormControl.touched && nameFormControl.invalid) {
+          <div class="invalid-feedback d-block">
+            @if (nameFormControl.hasError('required')) {
+              Name is required
+            } @else if (nameFormControl.hasError('whitespace')) {
+              Name can't be only spaces
+            } @else if (nameFormControl.hasError('maxlength')) {
+              Maximum 100 characters
+            }
+          </div>
+        }
+      </div>
 
-            <form action="/categories" method="post" class="needs-validation" novalidate>
-
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-
-                        <!-- Name -->
-                        <div class="mb-3">
-                            <label for="categoryName" class="form-label">
-                                Name <span class="text-danger">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="categoryName"
-                                name="name"
-                                placeholder="e.g. Men's Clothing"
-                                maxlength="100"
-                                required
-                                autofocus>
-                            <div class="invalid-feedback">
-                                Please enter a category name.
-                            </div>
-                        </div>
-
-                        <!-- Slug -->
-                        <div class="mb-3">
-                            <label for="categorySlug" class="form-label">
-                                URL Handle (slug) <span class="text-danger">*</span>
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-text">/category/</span>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    id="categorySlug"
-                                    name="slug"
-                                    placeholder="mens-clothing"
-                                    pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
-                                    maxlength="120"
-                                    aria-describedby="slugHelp"
-                                    required>
-                                <div class="invalid-feedback">
-                                    Use only lowercase letters, numbers, and hyphens.
-                                </div>
-                            </div>
-                            <div id="slugHelp" class="form-text">
-                                Auto-generated from the name. You can edit it.
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="card-footer bg-transparent d-flex justify-content-end gap-2 p-3">
-                        <a href="/categories" class="btn btn-outline-secondary">Cancel</a>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                </div>
-
-            </form>
+      <div class="mt-3">
+        <label class="form-label">URL Handle(slug) <span class="text-danger">*</span></label>
+        <input
+          id="urlHandel"
+          type="text"
+          class="form-control"
+          formControlName="urlHandel"
+          [class.is-invalid]="urlFormControl.touched && urlFormControl.invalid"
+        />
+        @if(urlFormControl.touched && urlFormControl.invalid){
+           <div class="invalid-feedback d-block">
+            @if (urlFormControl.hasError('required')) { urlHandel is required }
+            @else if (urlFormControl.hasError('whitespace')) { urlHandel can't be only spaces }
+            @else if (urlFormControl.hasError('maxlength')) { Maximum 100 characters }
         </div>
-    </div>
-</div>
+        }
+      </div>
 
- 
+      <div class="mt-3">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="addCategoryFormGroup.valid === false"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

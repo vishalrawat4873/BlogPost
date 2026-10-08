@@ -31,6 +31,12 @@ namespace BlogPost.API
             app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
+            app.UseCors(option =>
+            {
+                option.AllowAnyHeader();
+                option.AllowAnyMethod();
+                option.AllowAnyOrigin();
+            });
 
             app.UseAuthorization();
 
