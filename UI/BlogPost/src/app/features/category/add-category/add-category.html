@@ -34,12 +34,16 @@
           formControlName="urlHandel"
           [class.is-invalid]="urlFormControl.touched && urlFormControl.invalid"
         />
-        @if(urlFormControl.touched && urlFormControl.invalid){
-           <div class="invalid-feedback d-block">
-            @if (urlFormControl.hasError('required')) { urlHandel is required }
-            @else if (urlFormControl.hasError('whitespace')) { urlHandel can't be only spaces }
-            @else if (urlFormControl.hasError('maxlength')) { Maximum 100 characters }
-        </div>
+        @if (urlFormControl.touched && urlFormControl.invalid) {
+          <div class="invalid-feedback d-block">
+            @if (urlFormControl.hasError('required')) {
+              urlHandel is required
+            } @else if (urlFormControl.hasError('whitespace')) {
+              urlHandel can't be only spaces
+            } @else if (urlFormControl.hasError('maxlength')) {
+              Maximum 100 characters
+            }
+          </div>
         }
       </div>
 

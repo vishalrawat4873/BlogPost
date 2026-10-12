@@ -14,7 +14,7 @@ export function noWhitespaceValidator(control: AbstractControl): ValidationError
 
 @Component({
   selector: 'app-add-category',
-  imports: [RouterLink,ReactiveFormsModule],
+  imports: [RouterLink, ReactiveFormsModule],
   templateUrl: './add-category.html',
   styleUrl: './add-category.css',
 })
@@ -22,13 +22,13 @@ export function noWhitespaceValidator(control: AbstractControl): ValidationError
 
 export class AddCategory {
 
-  constructor(){
-    effect(()=>{
-      if(this.categoryService.addCategoryStatus()==='success'){
+  constructor() {
+    effect(() => {
+      if (this.categoryService.addCategoryStatus() === 'success') {
         console.log('success');
         //redirect to category list page
       }
-      if(this.categoryService.addCategoryStatus()==='error'){
+      if (this.categoryService.addCategoryStatus() === 'error') {
         console.log('Add category request failed');
       }
     })
@@ -37,33 +37,30 @@ export class AddCategory {
   //import reactive form moduls
   //import formgroup--> form control
   addCategoryFormGroup = new FormGroup({
-    name: new FormControl<string>('', { 
-    nonNullable :true, 
-    validators:[Validators.required, Validators.maxLength(100), noWhitespaceValidator]
+    name: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(100), noWhitespaceValidator]
     }),
     urlHandel: new FormControl<string>('', {
-      nonNullable :true,
-      validators: [Validators.required,Validators.maxLength(200), noWhitespaceValidator] 
-      })
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(200), noWhitespaceValidator]
+    })
   });
 
-  get nameFormControl(){
+  get nameFormControl() {
     return this.addCategoryFormGroup.controls.name;
   }
-   get urlFormControl(){
+  get urlFormControl() {
     return this.addCategoryFormGroup.controls.urlHandel;
   }
 
-  onSubmit(){
+  onSubmit() {
     const addCategoryFormValue = this.addCategoryFormGroup.getRawValue();
 
-    const addCategoryRequestDto : AddCategoryRequest = {
-      name: addCategoryFormValue.name ,
-      urlHandle : addCategoryFormValue.urlHandel
+    const addCategoryRequestDto: AddCategoryRequest = {
+      name: addCategoryFormValue.name,
+      urlHandle: addCategoryFormValue.urlHandel
     }
-
     this.categoryService.addCategory(addCategoryRequestDto);
-
-    
   }
 }

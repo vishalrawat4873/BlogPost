@@ -7,13 +7,13 @@ import { AddCategoryRequest } from '../Model/category.model';
 })
 export class CategoryServices {
   private http = inject(HttpClient);
-  private apiBaseUrl = 'https://localhost:7241';
+  private apiBaseUrl = 'https://localhost:7083';
 
   addCategoryStatus = signal<'idel' | 'loading' | 'error' | 'success'>('idel');
 
   addCategory(category: AddCategoryRequest){
     this.addCategoryStatus.set('loading');
-  this.http.post<void>(`${this.apiBaseUrl}/api/Categories`,category).subscribe({
+  this.http.post<void>(`${this.apiBaseUrl}/api/Category`,category).subscribe({
     next: () => {
       this.addCategoryStatus.set('success');
     },
