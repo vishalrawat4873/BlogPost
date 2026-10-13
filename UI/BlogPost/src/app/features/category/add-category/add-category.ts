@@ -1,6 +1,6 @@
 import { Component, effect, inject } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AddCategoryRequest } from '../Model/category.model';
 import { CategoryServices } from '../services/category-services';
 
@@ -22,18 +22,20 @@ export function noWhitespaceValidator(control: AbstractControl): ValidationError
 
 export class AddCategory {
 
+  private categoryService = inject(CategoryServices);
+  private router = inject(Router);
+
   constructor() {
     effect(() => {
       if (this.categoryService.addCategoryStatus() === 'success') {
-        console.log('success');
-        //redirect to category list page
+        this.categoryService.addCategoryStatus.set('idel');
+        this.router.navigate(['/admin/categories']);
       }
       if (this.categoryService.addCategoryStatus() === 'error') {
         console.log('Add category request failed');
       }
-    })
+    });
   }
-  private categoryService = inject(CategoryServices)
   //import reactive form moduls
   //import formgroup--> form control
   addCategoryFormGroup = new FormGroup({

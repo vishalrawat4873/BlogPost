@@ -1,7 +1,9 @@
-﻿namespace BlogPost.Application.DTOs
+﻿namespace BlogPost.Application.DTOs.Category
 {
-    public class CreateCategoryDto
+    public class CategoryDto
     {
+        public Guid Id { get; set; }
+
         public string Name { get; set; } = string.Empty;
 
         public string UrlHandle { get; set; } = string.Empty;

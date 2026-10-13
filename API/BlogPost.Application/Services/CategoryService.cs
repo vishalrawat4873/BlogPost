@@ -1,4 +1,4 @@
-﻿using BlogPost.Application.DTOs;
+﻿using BlogPost.Application.DTOs.Category;
 using BlogPost.Application.Interfaces.Repositories;
 using BlogPost.Application.Interfaces.Services;
 using BlogPost.Domain.Entities;
@@ -46,9 +46,45 @@ namespace BlogPost.Application.Services
                 UrlHandle = category.UrlHandle
             };
         }
-    }
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            return await _categoryRepository.DeleteAsync(id);
 
+        }
+        public async Task<CategoryDto?> GetByIdAsync(Guid id)
+        {
+            var category = await _categoryRepository.GetByIdAsync(id);
+            if(category == null)
+            {
+                return null;
+            }
 
-
-
+            return new CategoryDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                UrlHandle= category.UrlHandle
+            };
+        }
+        public async Task<CategoryDto?> UpdateAsync(Guid id,UpdateCategoryDto updateCategoryDto)
+        {
+            var category = new Category
+            {
+                Id = id,
+                Name = updateCategoryDto.Name,
+                UrlHandle = updateCategoryDto.UrlHandle
+            };
+            var updated = await _categoryRepository.UpdateAsync(category);
+            if(updated == null)
+            {
+                return null;
+            }
+            return new CategoryDto
+            {
+                Id = updated.Id,
+                Name = updated.Name,
+                UrlHandle = updated.UrlHandle
+            };
+        }
+    }   
 }

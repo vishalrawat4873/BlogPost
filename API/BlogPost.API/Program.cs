@@ -28,7 +28,7 @@ namespace BlogPost.API
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.WithOrigins("http://localhost:4200")   // your Angular app URL
+                    policy.WithOrigins("http://localhost:4200")  
                           .AllowAnyHeader()
                           .AllowAnyMethod();
                 });
@@ -38,14 +38,10 @@ namespace BlogPost.API
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
                 builder.Configuration.GetConnectionString("BlogPostConnectionString")));
 
-            
-
-            
-
-
             var app = builder.Build();
 
-      
+
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
