@@ -10,7 +10,8 @@ export class CategoryServices {
   private apiBaseUrl = 'https://localhost:7083';
 
   addCategoryStatus = signal<'idel' | 'loading' | 'error' | 'success'>('idel');
-
+  deleteCategoryStatus = signal<'idel' | 'loading' | 'error' | 'success'>('idel');
+ 
   getAllCategory(){
     return httpResource<Category[]>(()=> `${this.apiBaseUrl}/api/Category`)
   }
@@ -24,6 +25,18 @@ export class CategoryServices {
     },
     error: () => {this.addCategoryStatus.set('error')}
   })
+  }
+
+  deleteCategory(category: Category){
+    this.deleteCategoryStatus.set('loading');
+    this.http.delete<void>(`${this.apiBaseUrl}/api/Category/${category.id}`).subscribe({
+      next: () =>{
+        this.deleteCategoryStatus.set('success');
+      },
+      error: () => {
+        this.deleteCategoryStatus.set('error');
+      }
+    })
   }
 
   

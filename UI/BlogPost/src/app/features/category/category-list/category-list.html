@@ -24,6 +24,7 @@
                             <th scope="col">#</th>
                             <th scope="col">Name</th>
                             <th scope="col">URL Handle</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -32,10 +33,25 @@
                                 <td>{{ i + 1 }}</td>
                                 <td>{{ category.name }}</td>
                                 <td>{{ category.urlHandle }}</td>
+                                <td class="text-end">
+                                    <a
+                                        [routerLink]="['/admin', 'categories', category.id, 'edit']"
+                                        class="btn btn-sm btn-outline-primary me-2"
+                                    >
+                                        Edit
+                                    </a>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-danger"
+                                        (click)="confirmDelete(category)"
+                                    >
+                                        Delete
+                                    </button>
+                                </td>
                             </tr>
                         } @empty {
                             <tr>
-                                <td colspan="3" class="text-center text-muted py-4">
+                                <td colspan="4" class="text-center text-muted py-4">
                                     No categories found.
                                 </td>
                             </tr>
@@ -45,4 +61,46 @@
             </div>
         }
     </div>
+
+    <!-- Modern Confirmation Modal (replaces browser confirm) -->
+    @if (categoryToDelete) {
+        <div class="modal-backdrop fade show"></div>
+        <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-lg border-0">
+                    <div class="modal-header bg-light">
+                        <h5 class="modal-title fw-semibold text-danger">Confirm Deletion</h5>
+                        <button type="button" class="btn-close" (click)="cancelDelete()" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body py-4">
+                        <p class="mb-0 fs-6">
+                            Are you sure you want to delete category <strong>"{{ categoryToDelete.name }}"</strong>?
+                        </p>
+                        <small class="text-muted">This action cannot be undone.</small>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+                        <button type="button" class="btn btn-danger" (click)="proceedDelete()">Delete Category</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Modern Toast Notification (replaces browser alert) -->
+    @if (toastMessage) {
+        <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
+            <div class="toast show align-items-center text-white border-0 shadow-lg"
+                 [class.bg-success]="toastType === 'success'"
+                 [class.bg-danger]="toastType === 'danger'"
+                 role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fs-6 py-3">
+                        {{ toastMessage }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="toastMessage = null" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
