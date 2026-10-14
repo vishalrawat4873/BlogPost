@@ -97,6 +97,24 @@
                       <mat-error>Image URL is required</mat-error>
                     }
                   </mat-form-field>
+
+                  <!-- Image Preview directly under URL input -->
+                  @if (featuredImageUrlControl.value) {
+                    <div class="mt-2 p-2 border rounded-3 bg-light shadow-sm">
+                      <div class="d-flex align-items-center justify-content-between mb-2">
+                        <small class="text-muted fw-semibold">
+                          <mat-icon class="align-middle me-1 text-primary" style="font-size: 16px; width: 16px; height: 16px;">visibility</mat-icon>
+                          Image Preview
+                        </small>
+                      </div>
+                      <img 
+                        [src]="featuredImageUrlControl.value" 
+                        alt="Featured image preview" 
+                        class="img-fluid rounded-2 border" 
+                        style="max-height: 200px; width: 100%; object-fit: cover;" 
+                      />
+                    </div>
+                  }
                 </div>
 
                 <!-- Published Date -->
@@ -107,16 +125,6 @@
                     <mat-icon matPrefix class="me-2 text-secondary">calendar_today</mat-icon>
                   </mat-form-field>
                 </div>
-
-                <!-- Image Preview (if provided) -->
-                @if (featuredImageUrlControl.value) {
-                  <div class="col-12">
-                    <div class="p-2 border rounded-3 bg-light">
-                      <small class="text-muted d-block mb-1">Image Preview:</small>
-                      <img [src]="featuredImageUrlControl.value" alt="Preview" class="img-fluid rounded-2" style="max-height: 180px; object-fit: cover; width: 100%;" />
-                    </div>
-                  </div>
-                }
 
                 <!-- Content -->
                 <div class="col-12">
