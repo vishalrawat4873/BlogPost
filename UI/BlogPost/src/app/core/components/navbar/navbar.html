@@ -1,23 +1,87 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Blog Post</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li> 
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Admin
+<mat-toolbar class="modern-navbar px-3 px-md-4 shadow-sm">
+  <div class="container d-flex align-items-center justify-content-between p-0">
+    
+    <!-- Left: Brand Logo & Navigation Links -->
+    <div class="d-flex align-items-center gap-4">
+      <a [routerLink]="['/']" class="brand-link d-flex align-items-center gap-2 text-decoration-none">
+        <div class="brand-icon d-flex align-items-center justify-content-center text-white rounded-3">
+          <mat-icon>auto_stories</mat-icon>
+        </div>
+        <div class="brand-text d-flex flex-column">
+          <span class="brand-title fw-bold">BlogPost</span>
+          <span class="brand-subtitle text-muted">Admin & Editorial</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="d-none d-md-flex align-items-center gap-1">
+        <a [routerLink]="['/']" 
+           routerLinkActive="active-nav-link" 
+           [routerLinkActiveOptions]="{ exact: true }" 
+           mat-button 
+           class="nav-link-btn">
+          <mat-icon class="me-1">home</mat-icon>
+          Home
+        </a>
+
+        <!-- Admin Dropdown Menu -->
+        <button mat-button [matMenuTriggerFor]="adminMenu" class="nav-link-btn">
+          <mat-icon class="me-1">admin_panel_settings</mat-icon>
+          Admin
+          <mat-icon class="dropdown-chevron">expand_more</mat-icon>
+        </button>
+
+        <mat-menu #adminMenu="matMenu" class="modern-dropdown-menu" xPosition="after">
+          <!-- Categories -->
+          <a mat-menu-item [routerLink]="['/admin', 'categories']">
+            <mat-icon class="text-primary">category</mat-icon>
+            <span>Categories</span>
           </a>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" [routerLink] = "['admin','categories']">Categories</a></li>
-          </ul>
-        </li>
-      </ul>
+         
+
+          <!-- Divider -->
+          <div class="dropdown-divider my-1"></div>
+
+          <!-- Blog Posts -->
+          <a mat-menu-item [routerLink]="['/admin', 'blogs']">
+            <mat-icon class="text-info">article</mat-icon>
+            <span>Blog Posts</span>
+          </a>
+           
+        </mat-menu>
+      </nav>
     </div>
+
+    <!-- Right: Quick Actions & Mobile Menu -->
+    <div class="d-flex align-items-center gap-2"> 
+      <!-- Mobile Menu Button -->
+      <button mat-icon-button [matMenuTriggerFor]="mobileMenu" class="d-md-none text-secondary" aria-label="Open menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <mat-menu #mobileMenu="matMenu" xPosition="before">
+        <a mat-menu-item [routerLink]="['/']">
+          <mat-icon>home</mat-icon>
+          <span>Home</span>
+        </a>
+        <a mat-menu-item [routerLink]="['/admin', 'categories']">
+          <mat-icon class="text-primary">category</mat-icon>
+          <span>Categories</span>
+        </a>
+        <a mat-menu-item [routerLink]="['/admin', 'categories', 'add-category']">
+          <mat-icon class="text-success">add_circle</mat-icon>
+          <span>Add Category</span>
+        </a>
+        <a mat-menu-item [routerLink]="['/admin', 'blogs']">
+          <mat-icon class="text-info">article</mat-icon>
+          <span>Blog Posts</span>
+        </a>
+        <a mat-menu-item [routerLink]="['/admin', 'blogs', 'add-blog']">
+          <mat-icon class="text-warning">post_add</mat-icon>
+          <span>Add Blog Post</span>
+        </a>
+      </mat-menu>
+    </div>
+
   </div>
-</nav>
+</mat-toolbar>

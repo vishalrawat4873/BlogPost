@@ -1,0 +1,128 @@
+using BlogPost.Application.DTOs.Blog;
+using BlogPost.Application.DTOs.Category;
+using BlogPost.Application.Interfaces.Repositories;
+using BlogPost.Application.Interfaces.Services;
+using BlogPost.Domain.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace BlogPost.Application.Services
+{
+    public class BlogService : IBlogService
+    {
+        private readonly IBlogRepository _blogRepository;
+        public BlogService(IBlogRepository blogRepository)
+        {
+            _blogRepository = blogRepository;
+        }
+        public async Task<List<BlogDto>> GetAllAsync()
+        {
+            var blog = await _blogRepository.GetAllAsync();
+            var response = blog.Select(c => new BlogDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                ShortDescription = c.ShortDescription,
+                Title = c.Title,
+                PublishedDate = c.PublishedDate,
+                Author = c.Author,
+                Content = c.Content,
+                FeaturedImageUrl = c.FeaturedImageUrl,
+                IsVisible = c.IsVisible,
+            }).ToList();
+
+            return response;
+        }
+        public async Task<BlogDto?> GetByIdAsync(Guid id)
+        {
+            var blog = await _blogRepository.GetByIdAsync(id);
+            if (blog == null)
+            {
+                return null;
+            }
+            return new BlogDto
+            {
+                Id = blog.Id,
+                ShortDescription = blog.ShortDescription,
+                Name = blog.Name,
+                IsVisible = blog.IsVisible,
+                Author = blog.Author,
+                Content = blog.Content,
+                FeaturedImageUrl = blog.FeaturedImageUrl,
+                PublishedDate = blog.PublishedDate,
+                Title = blog.Title,
+            };
+        }
+        public async Task<BlogDto> CreateAsync(CreateBlogDto createBlogDto)
+        {
+            var category = new Blog
+            {
+                Name = createBlogDto.Name,
+                Title = createBlogDto.Title,
+                PublishedDate = createBlogDto.PublishedDate,
+                Author = createBlogDto.Author,
+                Content = createBlogDto.Content,
+                FeaturedImageUrl = createBlogDto.FeaturedImageUrl,
+                IsVisible = createBlogDto.IsVisible,
+                ShortDescription = createBlogDto.ShortDescription
+            };
+            await _blogRepository.CreateAsync(category);
+
+            return new BlogDto
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Title = category.Title,
+                PublishedDate = category.PublishedDate,
+                Author = category.Author,
+                Content = category.Content,
+                FeaturedImageUrl = category.FeaturedImageUrl,
+                IsVisible = category.IsVisible,
+                ShortDescription = category.ShortDescription
+            };
+        }
+        public async Task<BlogDto?> UpdateAsync(Guid id, UpdateBlogDto updateBlogDto)
+        {
+            var blog = new Blog
+            {
+                Id = id,
+                Name = updateBlogDto.Name,
+                Author = updateBlogDto.Author,
+                Content = updateBlogDto.Content,
+                ShortDescription = updateBlogDto.ShortDescription,
+                IsVisible = updateBlogDto.IsVisible,
+                PublishedDate = updateBlogDto.PublishedDate,
+                Title = updateBlogDto.Title,
+                FeaturedImageUrl = updateBlogDto.FeaturedImageUrl
+            };
+
+            var updatedBlog = await _blogRepository.UpdateAsync(blog);
+            if (updatedBlog == null)
+            {
+                return null;
+            }
+            
+            return new BlogDto
+            {
+                Id = updatedBlog.Id,
+                IsVisible = updatedBlog.IsVisible,
+                FeaturedImageUrl = updatedBlog.FeaturedImageUrl,
+                Title = updatedBlog.Title,
+                PublishedDate = updatedBlog.PublishedDate,
+                Author = updatedBlog.Author,
+                Content = updatedBlog.Content,
+                Name = updatedBlog.Name,
+                ShortDescription = updatedBlog.ShortDescription,
+            };
+        }
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            return await _blogRepository.DeleteAsync(id);
+        }
+    }
+
+}

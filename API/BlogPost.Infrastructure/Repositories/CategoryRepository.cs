@@ -44,7 +44,7 @@ namespace BlogPost.Infrastructure.Repositories
 
         public async Task<Category?> UpdateAsync(Category category)
         {
-            var existing = await _applicationDbContext.Categories.FirstOrDefaultAsync
+            var existing = await _applicationDbContext.Categories.AsTracking().FirstOrDefaultAsync
                 (c => c.Id == category.Id);
 
             if (existing == null)

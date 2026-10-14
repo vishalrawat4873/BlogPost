@@ -1,0 +1,160 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+      
+      <!-- Back Link & Header -->
+      <div class="mb-4">
+        <a [routerLink]="['/admin', 'blogs']" mat-button class="text-secondary ps-0 mb-2">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Blog Posts
+        </a>
+        <h1 class="h3 fw-bold mb-1 text-dark">Create New Blog Post</h1>
+        <p class="text-muted small">Compose and configure an article for your blog platform</p>
+      </div>
+
+      <!-- Form Card -->
+      <mat-card class="elevation-1 border-0 shadow-sm rounded-4 overflow-hidden">
+        <mat-card-content class="p-4">
+          <form [formGroup]="addBlogFormGroup" (ngSubmit)="onSubmit()">
+            
+            <div class="row g-3">
+              <!-- Name (Slug/Identifier) -->
+              <div class="col-12 col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Internal Name</mat-label>
+                  <input matInput type="text" placeholder="e.g. intro-to-angular-20" formControlName="name" required />
+                  <mat-icon matPrefix class="me-2 text-secondary">fingerprint</mat-icon>
+                  @if (nameControl.hasError('required')) {
+                    <mat-error>Internal name is required</mat-error>
+                  } @else if (nameControl.hasError('whitespace')) {
+                    <mat-error>Cannot be empty spaces</mat-error>
+                  }
+                  <mat-hint>Unique URL slug or reference</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <!-- Author -->
+              <div class="col-12 col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Author</mat-label>
+                  <input matInput type="text" placeholder="e.g. John Doe" formControlName="author" required />
+                  <mat-icon matPrefix class="me-2 text-secondary">person</mat-icon>
+                  @if (authorControl.hasError('required')) {
+                    <mat-error>Author name is required</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <!-- Title -->
+              <div class="col-12">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Blog Title</mat-label>
+                  <input matInput type="text" placeholder="e.g. Modern Web Development in 2026" formControlName="title" required />
+                  <mat-icon matPrefix class="me-2 text-secondary">title</mat-icon>
+                  @if (titleControl.hasError('required')) {
+                    <mat-error>Blog title is required</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <!-- Short Description -->
+              <div class="col-12">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Short Description</mat-label>
+                  <textarea matInput rows="2" placeholder="Brief summary of the article..." formControlName="shortDescription" required></textarea>
+                  <mat-icon matPrefix class="me-2 text-secondary">short_text</mat-icon>
+                  @if (shortDescriptionControl.hasError('required')) {
+                    <mat-error>Short description is required</mat-error>
+                  }
+                  <mat-hint align="end">{{ shortDescriptionControl.value.length }} / 500</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <!-- Featured Image URL -->
+              <div class="col-12 col-md-8">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Featured Image URL</mat-label>
+                  <input matInput type="url" placeholder="https://images.unsplash.com/..." formControlName="featuredImageUrl" required />
+                  <mat-icon matPrefix class="me-2 text-secondary">image</mat-icon>
+                  @if (featuredImageUrlControl.hasError('required')) {
+                    <mat-error>Image URL is required</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <!-- Published Date -->
+              <div class="col-12 col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Published Date</mat-label>
+                  <input matInput type="date" formControlName="publishedDate" required />
+                  <mat-icon matPrefix class="me-2 text-secondary">calendar_today</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <!-- Image Preview (if provided) -->
+              @if (featuredImageUrlControl.value) {
+                <div class="col-12">
+                  <div class="p-2 border rounded-3 bg-light">
+                    <small class="text-muted d-block mb-1">Image Preview:</small>
+                    <img [src]="featuredImageUrlControl.value" alt="Preview" class="img-fluid rounded-2" style="max-height: 180px; object-fit: cover; width: 100%;" />
+                  </div>
+                </div>
+              }
+
+              <!-- Content (Body) -->
+              <div class="col-12">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Content</mat-label>
+                  <textarea matInput rows="8" placeholder="Write the main blog article content here..." formControlName="content" required></textarea>
+                  @if (contentControl.hasError('required')) {
+                    <mat-error>Blog article content is required</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+
+              <!-- Visibility Toggle -->
+              <div class="col-12">
+                <div class="p-3 bg-light rounded-3 d-flex align-items-center justify-content-between border">
+                  <div>
+                    <span class="fw-semibold d-block text-dark">Publish Visibility</span>
+                    <small class="text-muted">When enabled, this blog post is publicly visible to readers</small>
+                  </div>
+                  <mat-slide-toggle formControlName="isVisible" color="primary"></mat-slide-toggle>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex align-items-center justify-content-end gap-2 pt-4 mt-3 border-top">
+              <a [routerLink]="['/admin', 'blogs']" mat-button type="button">
+                Cancel
+              </a>
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="addBlogFormGroup.invalid || isSubmitting"
+              >
+                @if (isSubmitting) {
+                  <span class="d-inline-flex align-items-center">
+                    <mat-spinner diameter="18" class="me-2"></mat-spinner>
+                    Publishing...
+                  </span>
+                } @else {
+                  <span class="d-inline-flex align-items-center">
+                    <mat-icon class="me-1">post_add</mat-icon>
+                    Create Post
+                  </span>
+                }
+              </button>
+            </div>
+
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,162 @@
+<div class="container py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h1 class="h3 fw-bold mb-1 text-dark">Blog Post Management</h1>
+            <p class="text-muted small mb-0">Publish, organize and manage all articles and blog stories</p>
+        </div>
+        <a [routerLink]="['/admin', 'blogs', 'add-blog']" mat-flat-button color="primary" class="d-inline-flex align-items-center">
+            <mat-icon class="me-1">add</mat-icon>
+            Add Blog Post
+        </a>
+    </div>
+
+    <!-- Main Content Card -->
+    <mat-card class="elevation-1 border-0 shadow-sm rounded-3 overflow-hidden">
+        <mat-card-content class="p-0">
+            @if (isLoading()) {
+                <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                    <mat-spinner diameter="44"></mat-spinner>
+                    <span class="text-muted mt-3 fw-medium">Loading blog posts...</span>
+                </div>
+            } @else if (isError()) {
+                <div class="p-4 text-center">
+                    <mat-icon color="warn" class="fs-1 d-block mx-auto mb-2" style="width: auto; height: auto;">error_outline</mat-icon>
+                    <h6 class="text-danger fw-semibold">Error Loading Blog Posts</h6>
+                    <p class="text-muted small mb-3">Unable to retrieve blogs from the server.</p>
+                    <button mat-stroked-button color="primary" (click)="getAllBlogsRef.reload()">
+                        <mat-icon>refresh</mat-icon>
+                        Try Again
+                    </button>
+                </div>
+            } @else {
+                <div class="table-responsive">
+                    <table class="table align-middle table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr class="text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                                <th scope="col" class="ps-4 py-3" style="width: 70px;">#</th>
+                                <th scope="col" class="py-3">Article</th>
+                                <th scope="col" class="py-3">Author</th>
+                                <th scope="col" class="py-3">Published Date</th>
+                                <th scope="col" class="py-3">Status</th>
+                                <th scope="col" class="text-end pe-4 py-3" style="width: 140px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (blog of value(); track blog.id; let i = $index) {
+                                <tr>
+                                    <td class="ps-4 fw-medium text-muted">{{ i + 1 }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            @if (blog.featuredImageUrl) {
+                                                <img [src]="blog.featuredImageUrl" [alt]="blog.title" class="blog-thumbnail rounded-2 object-fit-cover shadow-sm" style="width: 48px; height: 48px;" />
+                                            } @else {
+                                                <div class="blog-thumb-placeholder rounded-2 d-flex align-items-center justify-content-center bg-light text-secondary border" style="width: 48px; height: 48px;">
+                                                    <mat-icon style="font-size: 22px; width: 22px; height: 22px;">article</mat-icon>
+                                                </div>
+                                            }
+                                            <div class="d-flex flex-column">
+                                                <span class="fw-semibold text-dark">{{ blog.title }}</span>
+                                                <small class="text-muted text-truncate" style="max-width: 280px;">{{ blog.shortDescription }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-1 text-secondary">
+                                            <mat-icon style="font-size: 16px; width: 16px; height: 16px;">person_outline</mat-icon>
+                                            <span class="small fw-medium">{{ blog.author || 'Anonymous' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="small text-muted">{{ blog.publishedDate | date:'mediumDate' }}</span>
+                                    </td>
+                                    <td>
+                                        @if (blog.isVisible) {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">
+                                                <span class="d-inline-block rounded-circle bg-success me-1" style="width: 6px; height: 6px;"></span>
+                                                Published
+                                            </span>
+                                        } @else {
+                                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 rounded-pill">
+                                                <span class="d-inline-block rounded-circle bg-secondary me-1" style="width: 6px; height: 6px;"></span>
+                                                Draft
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-inline-flex gap-1">
+                                            <a
+                                                [routerLink]="['/admin', 'blogs', blog.id, 'edit']"
+                                                mat-icon-button
+                                                color="primary"
+                                                title="Edit Blog"
+                                                aria-label="Edit Blog"
+                                            >
+                                                <mat-icon>edit</mat-icon>
+                                            </a>
+                                            <button
+                                                type="button"
+                                                mat-icon-button
+                                                color="warn"
+                                                title="Delete Blog"
+                                                aria-label="Delete Blog"
+                                                (click)="confirmDelete(blog)"
+                                            >
+                                                <mat-icon>delete_outline</mat-icon>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            } @empty {
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <mat-icon class="text-muted fs-1 mb-2" style="width: auto; height: auto;">post_add</mat-icon>
+                                        <h6 class="text-dark fw-semibold mb-1">No Blog Posts Found</h6>
+                                        <p class="text-muted small mb-3">Publish your first blog article today.</p>
+                                        <a [routerLink]="['/admin', 'blogs', 'add-blog']" mat-stroked-button color="primary">
+                                            <mat-icon>add</mat-icon>
+                                            Create Blog Post
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </mat-card-content>
+    </mat-card>
+
+    <!-- Material Style Confirmation Dialog -->
+    @if (blogToDelete) {
+        <div class="modal-backdrop fade show" style="background-color: rgba(0, 0, 0, 0.45); backdrop-filter: blur(2px);"></div>
+        <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-lg border-0 rounded-4 overflow-hidden">
+                    <div class="p-4">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="bg-danger-subtle text-danger p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                                <mat-icon>warning_amber</mat-icon>
+                            </div>
+                            <div>
+                                <h5 class="modal-title fw-bold text-dark mb-0">Delete Blog Post</h5>
+                                <small class="text-muted">Confirm permanent deletion</small>
+                            </div>
+                        </div>
+                        <p class="text-secondary mb-0">
+                            Are you sure you want to delete <strong class="text-dark">"{{ blogToDelete.title }}"</strong>? This action will permanently remove the post.
+                        </p>
+                    </div>
+                    <div class="bg-light px-4 py-3 d-flex justify-content-end gap-2 border-top">
+                        <button type="button" mat-button (click)="cancelDelete()">Cancel</button>
+                        <button type="button" mat-flat-button color="warn" (click)="proceedDelete()">
+                            <mat-icon class="me-1">delete</mat-icon>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

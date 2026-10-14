@@ -1,0 +1,5 @@
+/* edit-blog styling */
+.mat-mdc-card {
+  transition: box-shadow 0.2s ease;
+}
+

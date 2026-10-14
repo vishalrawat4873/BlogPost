@@ -23,6 +23,9 @@ namespace BlogPost.API
             // Dependency injection
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IBlogRepository, BlogRepository>();
+            builder.Services.AddScoped<IBlogService, BlogService>();
+
 
             builder.Services.AddCors(options =>
             {

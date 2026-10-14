@@ -1,61 +1,97 @@
-<div class="container">
-  <h1 class="mt-3">Add Category</h1>
-  <form [formGroup]="addCategoryFormGroup" (ngSubmit)="onSubmit()">
-    <div class="mt-3">
-      <div class="mt-3">
-        <label class="form-label" for="name">Name <span class="text-danger">*</span></label>
-        <input
-          id="name"
-          type="text"
-          class="form-control"
-          formControlName="name"
-          [class.is-invalid]="nameFormControl.touched && nameFormControl.invalid"
-        />
-
-        @if (nameFormControl.touched && nameFormControl.invalid) {
-          <div class="invalid-feedback d-block">
-            @if (nameFormControl.hasError('required')) {
-              Name is required
-            } @else if (nameFormControl.hasError('whitespace')) {
-              Name can't be only spaces
-            } @else if (nameFormControl.hasError('maxlength')) {
-              Maximum 100 characters
-            }
-          </div>
-        }
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+      
+      <!-- Back Link & Header -->
+      <div class="mb-4">
+        <a [routerLink]="['/admin', 'categories']" mat-button class="text-secondary ps-0 mb-2">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Categories
+        </a>
+        <h1 class="h3 fw-bold mb-1 text-dark">Create New Category</h1>
+        <p class="text-muted small">Define category identity and its URL handle for blog posts</p>
       </div>
 
-      <div class="mt-3">
-        <label class="form-label">URL Handle(slug) <span class="text-danger">*</span></label>
-        <input
-          id="urlHandel"
-          type="text"
-          class="form-control"
-          formControlName="urlHandel"
-          [class.is-invalid]="urlFormControl.touched && urlFormControl.invalid"
-        />
-        @if (urlFormControl.touched && urlFormControl.invalid) {
-          <div class="invalid-feedback d-block">
-            @if (urlFormControl.hasError('required')) {
-              urlHandel is required
-            } @else if (urlFormControl.hasError('whitespace')) {
-              urlHandel can't be only spaces
-            } @else if (urlFormControl.hasError('maxlength')) {
-              Maximum 100 characters
-            }
-          </div>
-        }
-      </div>
+      <!-- Material Form Card -->
+      <mat-card class="elevation-1 border-0 shadow-sm rounded-4 overflow-hidden">
+        <mat-card-content class="p-4">
+          <form [formGroup]="addCategoryFormGroup" (ngSubmit)="onSubmit()">
+            
+            <!-- Category Name Field -->
+            <div class="mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Category Name</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  placeholder="e.g. Technology, Lifestyle, Programming"
+                  formControlName="name"
+                  required
+                />
+                <mat-icon matPrefix class="me-2 text-secondary">label</mat-icon>
+                @if (nameFormControl.hasError('required')) {
+                  <mat-error>Category name is required</mat-error>
+                } @else if (nameFormControl.hasError('whitespace')) {
+                  <mat-error>Name cannot be only spaces</mat-error>
+                } @else if (nameFormControl.hasError('maxlength')) {
+                  <mat-error>Maximum 100 characters allowed</mat-error>
+                }
+                <mat-hint align="end">{{ nameFormControl.value.length }} / 100</mat-hint>
+              </mat-form-field>
+            </div>
 
-      <div class="mt-3">
-        <button
-          type="submit"
-          class="btn btn-primary"
-          [disabled]="addCategoryFormGroup.valid === false"
-        >
-          Save
-        </button>
-      </div>
+            <!-- URL Handle Field -->
+            <div class="mb-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>URL Handle (Slug)</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  placeholder="e.g. technology, programming-tips"
+                  formControlName="urlHandel"
+                  required
+                />
+                <mat-icon matPrefix class="me-2 text-secondary">link</mat-icon>
+                @if (urlFormControl.hasError('required')) {
+                  <mat-error>URL handle is required</mat-error>
+                } @else if (urlFormControl.hasError('whitespace')) {
+                  <mat-error>URL handle cannot be only spaces</mat-error>
+                } @else if (urlFormControl.hasError('maxlength')) {
+                  <mat-error>Maximum 200 characters allowed</mat-error>
+                }
+                <mat-hint>Used for friendly SEO routing (e.g., /categories/your-slug)</mat-hint>
+              </mat-form-field>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex align-items-center justify-content-end gap-2 pt-2 border-top">
+              <a [routerLink]="['/admin', 'categories']" mat-button type="button">
+                Cancel
+              </a>
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="addCategoryFormGroup.invalid || isSubmitting"
+              >
+                @if (isSubmitting) {
+                  <span class="d-inline-flex align-items-center">
+                    <mat-spinner diameter="18" class="me-2"></mat-spinner>
+                    Saving...
+                  </span>
+                } @else {
+                  <span class="d-inline-flex align-items-center">
+                    <mat-icon class="me-1">save</mat-icon>
+                    Save Category
+                  </span>
+                }
+              </button>
+            </div>
+
+          </form>
+        </mat-card-content>
+      </mat-card>
+
     </div>
-  </form>
+  </div>
 </div>

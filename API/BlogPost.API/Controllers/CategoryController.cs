@@ -36,7 +36,7 @@ namespace BlogPost.API.Controllers
             return Ok(category);
         }
         
-        [HttpPut("{id:guid}")]
+        [HttpPut("{id:Guid}")]
         public async Task<IActionResult> UpdateCategory(Guid id, UpdateCategoryDto updateCategoryDto)
         {
             var updated = await _categoryService.UpdateAsync(id, updateCategoryDto);

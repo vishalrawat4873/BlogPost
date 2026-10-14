@@ -1,0 +1,5 @@
+/* Styles for Edit Category component */
+.mat-mdc-card {
+  transition: box-shadow 0.2s ease-in-out;
+}
+

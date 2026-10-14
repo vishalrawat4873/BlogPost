@@ -1,13 +1,14 @@
-﻿using BlogPost.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿    using BlogPost.Domain.Entities;
+    using Microsoft.EntityFrameworkCore;
 
-namespace BlogPost.Infrastructure.Data
-{
-    public class ApplicationDbContext : DbContext
+    namespace BlogPost.Infrastructure.Data
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public class ApplicationDbContext : DbContext
         {
+            public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+            {
+            }
+            public DbSet<Category> Categories { get; set; }
+            public DbSet<Blog> Blogs { get; set; }
         }
-        public DbSet<Category> Categories { get; set; }
     }
-}

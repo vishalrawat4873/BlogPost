@@ -1,4 +1,4 @@
-﻿namespace BlogPost.Domain.Entities
+﻿    namespace BlogPost.Domain.Entities
 {
     public class Category
     {

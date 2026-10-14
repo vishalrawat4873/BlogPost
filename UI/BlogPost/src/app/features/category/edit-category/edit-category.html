@@ -1,0 +1,121 @@
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+      
+      <!-- Back Link & Header -->
+      <div class="mb-4">
+        <a [routerLink]="['/admin', 'categories']" mat-button class="text-secondary ps-0 mb-2">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Categories
+        </a>
+        <h1 class="h3 fw-bold mb-1 text-dark">Edit Category</h1>
+        <p class="text-muted small">Modify category attributes and URL slug</p>
+      </div>
+
+      <!-- Loading State -->
+      @if (isLoading()) {
+        <mat-card class="elevation-1 border-0 shadow-sm rounded-4 p-5 text-center">
+          <div class="d-flex flex-column align-items-center justify-content-center py-4">
+            <mat-spinner diameter="44"></mat-spinner>
+            <span class="text-muted mt-3 fw-medium">Loading category details...</span>
+          </div>
+        </mat-card>
+      } @else if (isError()) {
+        <!-- Error State -->
+        <mat-card class="elevation-1 border-0 shadow-sm rounded-4 p-4 text-center">
+          <mat-icon color="warn" class="fs-1 d-block mx-auto mb-2" style="width: auto; height: auto;">error_outline</mat-icon>
+          <h5 class="text-danger fw-semibold">Category Not Found</h5>
+          <p class="text-muted small mb-4">Could not retrieve information for this category. It may have been removed.</p>
+          <a [routerLink]="['/admin', 'categories']" mat-flat-button color="primary">
+            <mat-icon class="me-1">arrow_back</mat-icon>
+            Return to List
+          </a>
+        </mat-card>
+      } @else {
+        <!-- Material Form Card -->
+        <mat-card class="elevation-1 border-0 shadow-sm rounded-4 overflow-hidden">
+          <mat-card-content class="p-4">
+            <form [formGroup]="editCategoryFormGroup" (ngSubmit)="onSubmit()">
+              
+             
+
+              <!-- Category Name Field -->
+              <div class="mb-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Category Name</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    placeholder="e.g. Technology, Lifestyle, Programming"
+                    formControlName="name"
+                    required
+                  />
+                  <mat-icon matPrefix class="me-2 text-secondary">label</mat-icon>
+                  @if (nameFormControl.hasError('required')) {
+                    <mat-error>Category name is required</mat-error>
+                  } @else if (nameFormControl.hasError('whitespace')) {
+                    <mat-error>Name cannot be only spaces</mat-error>
+                  } @else if (nameFormControl.hasError('maxlength')) {
+                    <mat-error>Maximum 100 characters allowed</mat-error>
+                  }
+                  <mat-hint align="end">{{ nameFormControl.value.length }} / 100</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <!-- URL Handle Field -->
+              <div class="mb-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>URL Handle (Slug)</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    placeholder="e.g. technology, programming-tips"
+                    formControlName="urlHandle"
+                    required
+                  />
+                  <mat-icon matPrefix class="me-2 text-secondary">link</mat-icon>
+                  @if (urlFormControl.hasError('required')) {
+                    <mat-error>URL handle is required</mat-error>
+                  } @else if (urlFormControl.hasError('whitespace')) {
+                    <mat-error>URL handle cannot be only spaces</mat-error>
+                  } @else if (urlFormControl.hasError('maxlength')) {
+                    <mat-error>Maximum 200 characters allowed</mat-error>
+                  }
+                  <mat-hint>Used for friendly SEO routing (e.g., /categories/your-slug)</mat-hint>
+                </mat-form-field>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="d-flex align-items-center justify-content-end gap-2 pt-2 border-top">
+                <a [routerLink]="['/admin', 'categories']" mat-button type="button">
+                  Cancel
+                </a>
+                <button
+                  mat-flat-button
+                  color="primary"
+                  type="submit"
+                  [disabled]="editCategoryFormGroup.invalid || isSubmitting"
+                >
+                  @if (isSubmitting) {
+                    <span class="d-inline-flex align-items-center">
+                      <mat-spinner diameter="18" class="me-2"></mat-spinner>
+                      Updating...
+                    </span>
+                  } @else {
+                    <span class="d-inline-flex align-items-center">
+                      <mat-icon class="me-1">save</mat-icon>
+                      Save Changes
+                    </span>
+                  }
+                </button>
+              </div>
+
+            </form>
+          </mat-card-content>
+        </mat-card>
+      }
+
+    </div>
+  </div>
+</div>
+

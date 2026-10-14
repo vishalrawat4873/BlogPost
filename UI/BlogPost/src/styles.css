@@ -1,1 +1,45 @@
 /* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+html, body {
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8fafc;
+}
+
+/* Ensure MatMenu panels have solid background, clean elevation and proper layout over Bootstrap */
+.mat-mdc-menu-panel.modern-dropdown-menu {
+  background-color: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #e2e8f0 !important;
+  min-width: 210px !important;
+  padding: 6px 0 !important;
+}
+
+.mat-mdc-menu-panel.modern-dropdown-menu .mat-mdc-menu-item {
+  display: flex !important;
+  align-items: center !important;
+  min-height: 48px !important;
+  height: 48px !important;
+  padding: 0 16px !important;
+  color: #334155 !important;
+  font-size: 0.92rem !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+}
+
+.mat-mdc-menu-panel.modern-dropdown-menu .mat-mdc-menu-item mat-icon {
+  margin-right: 12px !important;
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.mat-mdc-menu-panel.modern-dropdown-menu .mat-mdc-menu-item:hover {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
