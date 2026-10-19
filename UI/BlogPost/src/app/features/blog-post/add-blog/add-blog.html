@@ -1,6 +1,6 @@
 <div class="container py-4">
   <div class="row justify-content-center">
-    <div class="col-12 col-lg-8">
+    <div class="col-12 col-xl-10">
       
       <!-- Back Link & Header -->
       <div class="mb-4">
@@ -109,15 +109,250 @@
                 </mat-form-field>
               </div>
 
-              <!-- Content (Body) -->
+              <!-- Content (Markdown Editor & Live Preview) -->
               <div class="col-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Content</mat-label>
-                  <textarea matInput rows="8" placeholder="Write the main blog article content here..." formControlName="content" required></textarea>
-                  @if (contentControl.hasError('required')) {
-                    <mat-error>Blog article content is required</mat-error>
+                <div class="markdown-editor-wrapper" [class.is-expanded]="isExpanded" [class.has-error]="contentControl.invalid && (contentControl.dirty || contentControl.touched)">
+                  
+                  <!-- Top Bar: Header & View Mode Switcher -->
+                  <div class="editor-header">
+                    <div class="d-flex align-items-center gap-2">
+                      <mat-icon class="text-primary fs-5">edit_note</mat-icon>
+                      <span class="fw-semibold text-dark">Blog Content</span>
+                      <span class="badge bg-primary-subtle text-primary border border-primary-subtle py-1 px-2 d-none d-sm-inline-flex align-items-center gap-1 markdown-pill">
+                        <mat-icon style="font-size: 14px; width: 14px; height: 14px;">text_fields</mat-icon>
+                        Markdown
+                      </span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                      <!-- Segmented View Mode Toggle Buttons -->
+                      <div class="view-mode-toggle">
+                        <button
+                          type="button"
+                          class="mode-btn"
+                          [class.active]="activeTab === 'write'"
+                          (click)="setActiveTab('write')"
+                          matTooltip="Editor Only"
+                        >
+                          <mat-icon>edit</mat-icon>
+                          <span class="d-none d-md-inline">Write</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          class="mode-btn"
+                          [class.active]="activeTab === 'preview'"
+                          (click)="setActiveTab('preview')"
+                          matTooltip="Live Preview Only"
+                        >
+                          <mat-icon>visibility</mat-icon>
+                          <span class="d-none d-md-inline">Preview</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          class="mode-btn"
+                          [class.active]="activeTab === 'split'"
+                          (click)="setActiveTab('split')"
+                          matTooltip="Side-by-side Split View"
+                        >
+                          <mat-icon>vertical_split</mat-icon>
+                          <span class="d-none d-md-inline">Split View</span>
+                        </button>
+                      </div>
+
+                      <!-- Expand / Fullscreen Toggle -->
+                      <button
+                        type="button"
+                        class="icon-action-btn"
+                        [matTooltip]="isExpanded ? 'Exit Fullscreen' : 'Fullscreen Distraction-Free'"
+                        (click)="toggleExpanded()"
+                      >
+                        <mat-icon>{{ isExpanded ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Quick Markdown Formatting Toolbar (visible in write & split mode) -->
+                  @if (activeTab !== 'preview') {
+                    <div class="editor-toolbar">
+                      <div class="toolbar-group">
+                        <button type="button" class="tool-btn" matTooltip="Bold (Ctrl+B)" (click)="insertMarkdown('**', '**', 'bold text')">
+                          <mat-icon>format_bold</mat-icon>
+                        </button>
+                        <button type="button" class="tool-btn" matTooltip="Italic (Ctrl+I)" (click)="insertMarkdown('*', '*', 'italic text')">
+                          <mat-icon>format_italic</mat-icon>
+                        </button>
+                      </div>
+
+                      <div class="toolbar-divider"></div>
+
+                      <div class="toolbar-group">
+                        <button type="button" class="tool-btn" matTooltip="Heading 2 (## Title)" (click)="insertMarkdown('## ', '', 'Heading')">
+                          <mat-icon>title</mat-icon>
+                        </button>
+                        <button type="button" class="tool-btn" matTooltip="Heading 3 (### Title)" (click)="insertMarkdown('### ', '', 'Subheading')">
+                          <mat-icon style="font-size: 18px; width: 18px; height: 18px;">format_size</mat-icon>
+                        </button>
+                      </div>
+
+                      <div class="toolbar-divider"></div>
+
+                      <div class="toolbar-group">
+                        <button type="button" class="tool-btn" matTooltip="Quote (> quote)" (click)="insertMarkdown('> ', '', 'Quote text')">
+                          <mat-icon>format_quote</mat-icon>
+                        </button>
+                        <button type="button" class="tool-btn" matTooltip="Inline Code (`code`)" (click)="insertMarkdown('`', '`', 'code')">
+                          <mat-icon>code</mat-icon>
+                        </button>
+                        <button type="button" class="tool-btn" matTooltip="Code Block (```)" (click)="insertCodeBlock()">
+                          <mat-icon>integration_instructions</mat-icon>
+                        </button>
+                      </div>
+
+                      <div class="toolbar-divider"></div>
+
+                      <div class="toolbar-group">
+                        <button type="button" class="tool-btn" matTooltip="Bullet List (- item)" (click)="insertMarkdown('- ', '', 'List item')">
+                          <mat-icon>format_list_bulleted</mat-icon>
+                        </button>
+                        <button type="button" class="tool-btn" matTooltip="Numbered List (1. item)" (click)="insertMarkdown('1. ', '', 'List item')">
+                          <mat-icon>format_list_numbered</mat-icon>
+                        </button>
+                        <button type="button" class="tool-btn" matTooltip="Task List (- [ ] item)" (click)="insertMarkdown('- [ ] ', '', 'Task item')">
+                          <mat-icon>checklist</mat-icon>
+                        </button>
+                      </div>
+
+                      <div class="toolbar-divider"></div>
+
+                      <div class="toolbar-group">
+                        <button type="button" class="tool-btn" matTooltip="Insert Link ([title](url))" (click)="insertMarkdown('[', '](https://example.com)', 'link title')">
+                          <mat-icon>link</mat-icon>
+                        </button>
+                        <button type="button" class="tool-btn" matTooltip="Insert Image (![alt](url))" (click)="insertMarkdown('![', '](https://images.unsplash.com/photo-...)', 'image description')">
+                          <mat-icon>image</mat-icon>
+                        </button>
+                        <button type="button" class="tool-btn" matTooltip="Insert Table" (click)="insertTable()">
+                          <mat-icon>table_chart</mat-icon>
+                        </button>
+                        <button type="button" class="tool-btn" matTooltip="Horizontal Divider (---)" (click)="insertMarkdown('\n---\n', '', '')">
+                          <mat-icon>horizontal_rule</mat-icon>
+                        </button>
+                      </div>
+
+                      <!-- Right aligned utility buttons -->
+                      <div class="ms-auto d-flex align-items-center gap-1">
+                        <button type="button" class="tool-btn text-muted" matTooltip="Copy Markdown" (click)="copyMarkdown()">
+                          <mat-icon>content_copy</mat-icon>
+                        </button>
+                        <button type="button" class="tool-btn text-primary" matTooltip="Load Sample Markdown" (click)="loadSampleMarkdown()">
+                          <mat-icon>auto_awesome</mat-icon>
+                        </button>
+                      </div>
+                    </div>
                   }
-                </mat-form-field>
+
+                  <!-- Body Area: Editor & Live Preview Panes -->
+                  <div class="editor-body-container" [attr.data-mode]="activeTab">
+                    
+                    <!-- Write Pane -->
+                    @if (activeTab === 'write' || activeTab === 'split') {
+                      <div class="pane write-pane" [class.pane-split]="activeTab === 'split'">
+                        @if (activeTab === 'split') {
+                          <div class="pane-header">
+                            <span class="pane-title">
+                              <mat-icon>code</mat-icon> MARKDOWN
+                            </span>
+                            <span class="pane-tag">Editor</span>
+                          </div>
+                        }
+                        <textarea
+                          #contentTextarea
+                          class="markdown-textarea"
+                          placeholder="Write your markdown article content here... (Supports GitHub Flavored Markdown)"
+                          formControlName="content"
+                          (keydown)="handleTextareaKeydown($event)"
+                          required
+                        ></textarea>
+                      </div>
+                    }
+
+                    <!-- Split Center Divider -->
+                    @if (activeTab === 'split') {
+                      <div class="pane-divider"></div>
+                    }
+
+                    <!-- Live Preview Pane -->
+                    @if (activeTab === 'preview' || activeTab === 'split') {
+                      <div class="pane preview-pane" [class.pane-split]="activeTab === 'split'">
+                        @if (activeTab === 'split') {
+                          <div class="pane-header">
+                            <span class="pane-title text-success">
+                              <mat-icon>visibility</mat-icon> LIVE PREVIEW
+                            </span>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle py-1 px-2 live-badge">
+                              <span class="live-dot"></span> Live
+                            </span>
+                          </div>
+                        }
+
+                        <div class="preview-scroll-area">
+                          @if (!contentControl.value || contentControl.value.trim() === '') {
+                            <div class="markdown-empty-state">
+                              <div class="empty-icon-wrapper">
+                                <mat-icon>auto_stories</mat-icon>
+                              </div>
+                              <h6 class="fw-semibold text-secondary mb-1">Live Preview Ready</h6>
+                              <p class="text-muted small mb-3">
+                                Start typing your markdown content in the editor to see the rendered output in real time.
+                              </p>
+                              <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" (click)="loadSampleMarkdown()">
+                                <mat-icon class="align-middle me-1" style="font-size: 16px; width: 16px; height: 16px;">auto_awesome</mat-icon>
+                                Load Markdown Example
+                              </button>
+                            </div>
+                          } @else {
+                            <div class="markdown-body">
+                              <markdown [data]="contentControl.value" lineNumbers clipboard></markdown>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+
+                  </div>
+
+                  <!-- Footer Bar: Live Statistics -->
+                  <div class="editor-footer">
+                    <div class="d-flex align-items-center gap-3 text-muted stats-group">
+                      <span><strong class="text-dark">{{ wordCount() }}</strong> words</span>
+                      <span class="bullet">•</span>
+                      <span><strong class="text-dark">{{ charCount() }}</strong> characters</span>
+                      <span class="bullet">•</span>
+                      <span>~<strong class="text-dark">{{ readingTime() }}</strong> min read</span>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 text-muted small ms-auto">
+                      <mat-icon style="font-size: 16px; width: 16px; height: 16px;">info</mat-icon>
+                      <span class="d-none d-sm-inline">GitHub-flavored Markdown & HTML supported</span>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Form Validation Error -->
+                @if (contentControl.touched && contentControl.hasError('required')) {
+                  <div class="text-danger small mt-2 ms-1 d-flex align-items-center">
+                    <mat-icon class="me-1" style="font-size: 16px; width: 16px; height: 16px;">error_outline</mat-icon>
+                    Blog article content is required
+                  </div>
+                } @else if (contentControl.touched && contentControl.hasError('whitespace')) {
+                  <div class="text-danger small mt-2 ms-1 d-flex align-items-center">
+                    <mat-icon class="me-1" style="font-size: 16px; width: 16px; height: 16px;">error_outline</mat-icon>
+                    Content cannot be empty spaces
+                  </div>
+                }
               </div>
 
               <!-- Visibility Toggle -->
