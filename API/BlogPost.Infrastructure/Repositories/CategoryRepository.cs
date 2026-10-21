@@ -38,7 +38,7 @@ namespace BlogPost.Infrastructure.Repositories
 
         public async Task<Category?> GetByIdAsync(Guid id)
         {
-            return await _applicationDbContext.Categories.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+            return await _applicationDbContext.Categories.FirstOrDefaultAsync(c => c.Id == id);
 
         }
 

@@ -15,24 +15,32 @@ namespace BlogPost.Application.Services
     public class BlogService : IBlogService
     {
         private readonly IBlogRepository _blogRepository;
-        public BlogService(IBlogRepository blogRepository)
+        private readonly ICategoryRepository _categoryRepository;
+        public BlogService(IBlogRepository blogRepository, ICategoryRepository categoryRepository)
         {
             _blogRepository = blogRepository;
+            _categoryRepository = categoryRepository;
         }
         public async Task<List<BlogDto>> GetAllAsync()
         {
             var blog = await _blogRepository.GetAllAsync();
-            var response = blog.Select(c => new BlogDto
+            var response = blog.Select(b => new BlogDto
             {
-                Id = c.Id,
-                Name = c.Name,
-                ShortDescription = c.ShortDescription,
-                Title = c.Title,
-                PublishedDate = c.PublishedDate,
-                Author = c.Author,
-                Content = c.Content,
-                FeaturedImageUrl = c.FeaturedImageUrl,
-                IsVisible = c.IsVisible,
+                Id = b.Id,
+                Name = b.Name,
+                ShortDescription = b.ShortDescription,
+                Title = b.Title,
+                PublishedDate = b.PublishedDate,
+                Author = b.Author,
+                Content = b.Content,
+                FeaturedImageUrl = b.FeaturedImageUrl,
+                IsVisible = b.IsVisible,
+                CategoryDtos = b.categories.Select(c => new CategoryDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    UrlHandle = c.UrlHandle
+                }).ToList()
             }).ToList();
 
             return response;
@@ -59,7 +67,7 @@ namespace BlogPost.Application.Services
         }
         public async Task<BlogDto> CreateAsync(CreateBlogDto createBlogDto)
         {
-            var category = new Blog
+            var blog = new Blog
             {
                 Name = createBlogDto.Name,
                 Title = createBlogDto.Title,
@@ -68,21 +76,38 @@ namespace BlogPost.Application.Services
                 Content = createBlogDto.Content,
                 FeaturedImageUrl = createBlogDto.FeaturedImageUrl,
                 IsVisible = createBlogDto.IsVisible,
-                ShortDescription = createBlogDto.ShortDescription
+                ShortDescription = createBlogDto.ShortDescription,
+                categories = new List<Category>()
             };
-            await _blogRepository.CreateAsync(category);
+
+            foreach(var categoryGuid in createBlogDto.Categories)
+            {
+                var existingCategoy = await _categoryRepository.GetByIdAsync(categoryGuid);
+                if (existingCategoy != null)
+                {
+                    blog.categories.Add(existingCategoy);
+                }
+
+            }
+            await _blogRepository.CreateAsync(blog);
 
             return new BlogDto
             {
-                Id = category.Id,
-                Name = category.Name,
-                Title = category.Title,
-                PublishedDate = category.PublishedDate,
-                Author = category.Author,
-                Content = category.Content,
-                FeaturedImageUrl = category.FeaturedImageUrl,
-                IsVisible = category.IsVisible,
-                ShortDescription = category.ShortDescription
+                Id = blog.Id,
+                Name = blog.Name,
+                Title = blog.Title,
+                PublishedDate = blog.PublishedDate,
+                Author = blog.Author,
+                Content = blog.Content,
+                FeaturedImageUrl = blog.FeaturedImageUrl,
+                IsVisible = blog.IsVisible,
+                ShortDescription = blog.ShortDescription,
+                CategoryDtos = blog.categories.Select(x => new CategoryDto
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    UrlHandle = x.UrlHandle,
+                }).ToList(),
             };
         }
         public async Task<BlogDto?> UpdateAsync(Guid id, UpdateBlogDto updateBlogDto)

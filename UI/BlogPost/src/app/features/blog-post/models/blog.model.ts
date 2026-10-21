@@ -1,3 +1,5 @@
+import { Category } from "../../category/Model/category.model";
+
 export interface Blog {
     id: string;
     name: string;
@@ -8,6 +10,7 @@ export interface Blog {
     publishedDate: string | Date;
     author: string;
     isVisible: boolean;
+    categoryDtos: Category[];
 }
 
 export interface CreateBlogRequest {
@@ -19,6 +22,7 @@ export interface CreateBlogRequest {
     publishedDate: string | Date;
     author: string;
     isVisible: boolean;
+    categories: string[];
 }
 
 export interface UpdateBlogRequest {

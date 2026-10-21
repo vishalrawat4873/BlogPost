@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, computed, effect, inject } from '@angular/core';
+import { Component, ElementRef, ViewChild, computed, effect, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -14,7 +14,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSelectModule } from '@angular/material/select';
+ 
 import { MarkdownComponent } from 'ngx-markdown';
+import { CategoryServices } from '../../category/services/category-services';
 
 export function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
   const value = control.value;
@@ -38,6 +41,7 @@ export function noWhitespaceValidator(control: AbstractControl): ValidationError
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatTooltipModule,
+    MatSelectModule,
     MarkdownComponent,
   ],
   templateUrl: './add-blog.html',
@@ -47,8 +51,12 @@ export class AddBlog {
   private blogService = inject(BlogService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private categoryService = inject(CategoryServices);
 
-  isSubmitting = false;
+  categoriesRef = this.categoryService.getAllCategory();
+  categories = this.categoriesRef.value;
+
+  isSubmitting = signal(false);
   activeTab: 'split' | 'write' | 'preview' = 'split';
   isExpanded = false;
 
@@ -84,6 +92,7 @@ export class AddBlog {
       validators: [Validators.required, Validators.maxLength(100), noWhitespaceValidator],
     }),
     isVisible: new FormControl<boolean>(true, { nonNullable: true }),
+    categories: new FormControl<string[]>([], { nonNullable: true }),
   });
 
   contentSignal = toSignal(this.addBlogFormGroup.controls.content.valueChanges, {
@@ -241,7 +250,7 @@ Feel free to edit this content or replace it with your own blog post!
     effect(() => {
       const status = this.blogService.addBlogStatus();
       if (status === 'success') {
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
         this.snackBar.open('Blog post created successfully!', 'Close', {
           duration: 3500,
           horizontalPosition: 'end',
@@ -251,7 +260,7 @@ Feel free to edit this content or replace it with your own blog post!
         this.blogService.addBlogStatus.set('idel');
         this.router.navigate(['/admin', 'blogs']);
       } else if (status === 'error') {
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
         this.snackBar.open('Failed to create blog post. Please check details and try again.', 'Close', {
           duration: 4000,
           horizontalPosition: 'end',
@@ -291,7 +300,7 @@ Feel free to edit this content or replace it with your own blog post!
       return;
     }
 
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
     const formValue = this.addBlogFormGroup.getRawValue();
 
     const requestDto: CreateBlogRequest = {
@@ -303,6 +312,7 @@ Feel free to edit this content or replace it with your own blog post!
       publishedDate: formValue.publishedDate,
       author: formValue.author,
       isVisible: formValue.isVisible,
+      categories: formValue.categories,
     };
 
     this.blogService.addBlog(requestDto);

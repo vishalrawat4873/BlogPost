@@ -16,5 +16,6 @@ namespace BlogPost.Application.DTOs.Blog
         public DateTime PublishedDate { get; set; }
         public string Author { get; set; } = string.Empty;
         public bool IsVisible { get; set; }
+        public Guid[] Categories { get; set; }
     }
 }

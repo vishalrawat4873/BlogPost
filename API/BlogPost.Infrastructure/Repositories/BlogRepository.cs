@@ -19,7 +19,7 @@ namespace BlogPost.Infrastructure.Repositories
         }
         public async Task<List<Blog>> GetAllAsync()
         {
-            return await _applicationDbContext.Blogs.AsNoTracking().ToListAsync();
+            return await _applicationDbContext.Blogs.Include(x=>x.categories).AsNoTracking().ToListAsync();
         }
 
         public async Task<Blog?> GetByIdAsync(Guid id)

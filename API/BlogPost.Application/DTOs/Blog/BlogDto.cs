@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlogPost.Application.DTOs.Category;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,5 +18,6 @@ namespace BlogPost.Application.DTOs.Blog
         public DateTime PublishedDate { get; set; }
         public string Author { get; set; } = string.Empty;
         public bool IsVisible { get; set; }
+        public List<CategoryDto> CategoryDtos { get; set; } = new List<CategoryDto>();
     }
 }
