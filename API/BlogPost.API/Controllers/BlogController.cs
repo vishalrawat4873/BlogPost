@@ -21,7 +21,7 @@ namespace BlogPost.API.Controllers
         }
 
         [HttpGet("{id:Guid}")]
-        public async Task<IActionResult> GetByIdAsynce(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var blog = await _blogService.GetByIdAsync(id);
             if (blog == null)

@@ -12,6 +12,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ImageSelector } from '../../../shared/Component/image-selector/image-selector';
 
 export function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
   const value = control.value;
@@ -34,6 +35,7 @@ export function noWhitespaceValidator(control: AbstractControl): ValidationError
     MatSlideToggleModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    ImageSelector
   ],
   templateUrl: './edit-blog.html',
   styleUrl: './edit-blog.css',
