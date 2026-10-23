@@ -52,7 +52,7 @@ namespace BlogPost.Application.Services
         }
         
         public async Task<BlogDto?> UpdateAsync(Guid id, UpdateBlogDto updateBlogDto)
-        {
+        { 
             var blog = new Blog
             {
                 Id = id,

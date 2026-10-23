@@ -92,6 +92,9 @@
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Featured Image URL</mat-label>
                     <input matInput type="url" formControlName="featuredImageUrl" required />
+                    <button mat-stroked-button matSuffix type="button" class="me-2" (click)="openImageSelector()">
+                      Select Image
+                    </button>
                     <mat-icon matPrefix class="me-2 text-secondary">image</mat-icon>
                     @if (featuredImageUrlControl.hasError('required')) {
                       <mat-error>Image URL is required</mat-error>
@@ -185,5 +188,4 @@
 </div>
 
 
-  <app-image-selector></app-image-selector>
- 
+  

@@ -12,7 +12,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { ImageSelector } from '../../../shared/Component/image-selector/image-selector';
+import { ImageSelectorService } from '../../../shared/services/image-selector-service';
 
 export function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
   const value = control.value;
@@ -35,7 +35,7 @@ export function noWhitespaceValidator(control: AbstractControl): ValidationError
     MatSlideToggleModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    ImageSelector
+    
   ],
   templateUrl: './edit-blog.html',
   styleUrl: './edit-blog.css',
@@ -45,7 +45,8 @@ export class EditBlog {
   private router = inject(Router);
   private blogService = inject(BlogService);
   private snackBar = inject(MatSnackBar);
-
+  
+  imageSelectorSerivce = inject(ImageSelectorService)
   blogId = signal<string>('');
   blogResource = this.blogService.getBlogById(() => this.blogId());
 
@@ -182,6 +183,14 @@ export class EditBlog {
     };
 
     this.blogService.updateBlog(this.blogId(), requestDto);
+  }
+   
+  openImageSelector() {
+    this.imageSelectorSerivce.open().subscribe((imageUrl) => {
+      if (imageUrl) {
+        this.editBlogFormGroup.patchValue({ featuredImageUrl: imageUrl });
+      }
+    });
   }
 }
 
