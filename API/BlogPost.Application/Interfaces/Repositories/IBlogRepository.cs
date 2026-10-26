@@ -1,8 +1,6 @@
-﻿using BlogPost.Domain.Entities;
+using BlogPost.Domain.Entities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BlogPost.Application.Interfaces.Repositories
@@ -11,6 +9,7 @@ namespace BlogPost.Application.Interfaces.Repositories
     {
         Task<List<Blog>> GetAllAsync();
         Task<Blog?> GetByIdAsync(Guid id);
+        Task<Blog?> GetByNameAsync(string name);
         Task<Blog> CreateAsync(Blog blog);
         Task<Blog?> UpdateAsync(Blog blog);
         Task<bool> DeleteAsync(Guid id);

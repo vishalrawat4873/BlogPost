@@ -22,6 +22,10 @@ export class BlogService {
     return httpResource<Blog>(() => `${this.apiBaseUrl}/api/Blog/${id()}`);
   }
 
+  getBlogByName(name: () => string) {
+    return httpResource<Blog>(() => `${this.apiBaseUrl}/api/Blog/${encodeURIComponent(name())}`);
+  }
+
   addBlog(blog: CreateBlogRequest) {
     this.addBlogStatus.set('loading');
     this.http.post<Blog>(`${this.apiBaseUrl}/api/Blog`, blog).subscribe({

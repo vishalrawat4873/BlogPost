@@ -1,0 +1,105 @@
+<div class="blog-details-container py-4 py-md-5">
+  <div class="container">
+    
+    <!-- Top Back Button -->
+    <div class="mb-4">
+      <a [routerLink]="['/']" mat-stroked-button class="rounded-pill">
+        <mat-icon class="me-1">arrow_back</mat-icon>
+        Back to Articles
+      </a>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="d-flex flex-column align-items-center justify-content-center py-5">
+        <mat-spinner diameter="48"></mat-spinner>
+        <span class="text-muted mt-3">Loading article...</span>
+      </div>
+    }
+
+    <!-- Error / Not Found State -->
+    @if (!isLoading() && (isError() || !blog())) {
+      <div class="alert alert-warning text-center p-5 rounded-4 border my-4 bg-white shadow-sm">
+        <mat-icon class="text-warning mb-2" style="font-size: 48px; width: 48px; height: 48px;">sentiment_dissatisfied</mat-icon>
+        <h3 class="fw-bold mb-2">Article Not Found</h3>
+        <p class="text-muted mb-4">The article you are looking for might have been removed, unpublished, or the link is incorrect.</p>
+        <a [routerLink]="['/']" mat-flat-button color="primary">
+          Explore Other Articles
+        </a>
+      </div>
+    }
+
+    <!-- Article Content -->
+    @if (!isLoading() && blog()) {
+      <article class="article-wrapper mx-auto">
+        
+        <!-- Header Section -->
+        <header class="article-header text-center mb-4">
+          
+          <!-- Category Badges -->
+          <div class="d-flex flex-wrap justify-content-center gap-2 mb-3">
+            @for (cat of blog()!.categoryDtos; track cat.id) {
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold">
+                {{ cat.name }}
+              </span>
+            }
+          </div>
+
+          <!-- Title -->
+          <h1 class="article-title fw-bold mb-3">
+            {{ blog()!.title }}
+          </h1>
+
+          <!-- Short Description / Lead -->
+          <p class="article-lead text-muted mx-auto mb-4">
+            {{ blog()!.shortDescription }}
+          </p>
+
+          <!-- Author Info & Date Meta -->
+          <div class="d-flex align-items-center justify-content-center gap-3 py-3 border-top border-bottom">
+            <div class="author-avatar">{{ getInitials(blog()!.author) }}</div>
+            <div class="text-start">
+              <div class="fw-bold text-dark">{{ blog()!.author }}</div>
+              <div class="text-muted small">
+                Published on {{ blog()!.publishedDate | date: 'longDate' }} · {{ readTime() }} min read
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Featured Banner Image -->
+        @if (blog()!.featuredImageUrl) {
+          <div class="featured-image-container rounded-4 overflow-hidden mb-5 shadow-sm border">
+            <img [src]="blog()!.featuredImageUrl" [alt]="blog()!.title" class="w-100 article-featured-img" />
+          </div>
+        }
+
+        <!-- Rendered Markdown Body -->
+        <div class="article-body-wrapper p-4 p-md-5 rounded-4 bg-white border shadow-sm mb-5">
+          <markdown class="markdown-body" [data]="blog()!.content"></markdown>
+        </div>
+
+        <!-- Article Footer / Share / Back -->
+        <div class="article-footer d-flex flex-column flex-sm-row align-items-center justify-content-between p-4 bg-white rounded-4 border gap-3">
+          <div class="d-flex align-items-center gap-2">
+            <mat-icon class="text-secondary">category</mat-icon>
+            <span class="text-muted small">Posted in:</span>
+            <div class="d-flex flex-wrap gap-1">
+              @for (cat of blog()!.categoryDtos; track cat.id) {
+                <span class="badge bg-light text-dark border">{{ cat.name }}</span>
+              }
+            </div>
+          </div>
+
+          <a [routerLink]="['/']" class="btn btn-outline-dark rounded-pill px-4 btn-sm d-flex align-items-center gap-1">
+            <mat-icon style="font-size: 16px; width: 16px; height: 16px;">arrow_back</mat-icon>
+            Back to Home
+          </a>
+        </div>
+
+      </article>
+    }
+
+  </div>
+</div>
+

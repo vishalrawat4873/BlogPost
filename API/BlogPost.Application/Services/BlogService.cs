@@ -3,7 +3,10 @@ using BlogPost.Application.DTOs.Category;
 using BlogPost.Application.Interfaces.Repositories;
 using BlogPost.Application.Interfaces.Services;
 using BlogPost.Domain.Entities;
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlogPost.Application.Services
 {
@@ -14,8 +17,8 @@ namespace BlogPost.Application.Services
         public BlogService(IBlogRepository blogRepository)
         {
             _blogRepository = blogRepository;
-             
         }
+
         public async Task<List<BlogDto>> GetAllAsync()
         {
             var blog = await _blogRepository.GetAllAsync();
@@ -25,6 +28,12 @@ namespace BlogPost.Application.Services
         public async Task<BlogDto?> GetByIdAsync(Guid id)
         {
             var blog = await _blogRepository.GetByIdAsync(id);
+            return blog == null ? null : MapToDto(blog);
+        }
+
+        public async Task<BlogDto?> GetByNameAsync(string name)
+        {
+            var blog = await _blogRepository.GetByNameAsync(name);
             return blog == null ? null : MapToDto(blog);
         }
         
@@ -45,7 +54,6 @@ namespace BlogPost.Application.Services
                     .ToList()
             };
 
-             
             await _blogRepository.CreateAsync(blog);
 
             return MapToDto(blog);
@@ -67,7 +75,6 @@ namespace BlogPost.Application.Services
                 categories = updateBlogDto.Categories
                     .Select(categoryId => new Category { Id = categoryId })
                     .ToList()
-
             };
 
             var updatedBlog = await _blogRepository.UpdateAsync(blog);
@@ -98,5 +105,4 @@ namespace BlogPost.Application.Services
             }).ToList(),
         };
     }
-
 }

@@ -1,10 +1,10 @@
-
 using BlogPost.Application.Interfaces.Repositories;
 using BlogPost.Application.Interfaces.Services;
+using BlogPost.Application.Services;
 using BlogPost.Infrastructure.Data;
 using BlogPost.Infrastructure.Repositories;
+using BlogPost.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
-using BlogPost.Application.Services;
 
 namespace BlogPost.API
 {
@@ -13,19 +13,19 @@ namespace BlogPost.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
- 
 
             builder.Services.AddControllers();
-
+            builder.Services.AddHttpContextAccessor();
             builder.Services.AddSwaggerGen();
-
 
             // Dependency injection
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IBlogRepository, BlogRepository>();
             builder.Services.AddScoped<IBlogService, BlogService>();
-
+            builder.Services.AddScoped<IImageRepository, ImageRepository>();
+            builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+            builder.Services.AddScoped<IImageService, ImageService>();
 
             builder.Services.AddCors(options =>
             {
@@ -43,8 +43,6 @@ namespace BlogPost.API
 
             var app = builder.Build();
 
-
-
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -52,10 +50,10 @@ namespace BlogPost.API
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseCors("AllowFrontend");
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

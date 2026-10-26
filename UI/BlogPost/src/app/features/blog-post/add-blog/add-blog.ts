@@ -18,6 +18,7 @@ import { MatSelectModule } from '@angular/material/select';
  
 import { MarkdownComponent } from 'ngx-markdown';
 import { CategoryServices } from '../../category/services/category-services';
+import { ImageSelectorService } from '../../../shared/services/image-selector-service';
 
 export function noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
   const value = control.value;
@@ -52,6 +53,7 @@ export class AddBlog {
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
   private categoryService = inject(CategoryServices);
+  private imageSelectorService = inject(ImageSelectorService);
 
   categoriesRef = this.categoryService.getAllCategory();
   categories = this.categoriesRef.value;
@@ -316,6 +318,14 @@ Feel free to edit this content or replace it with your own blog post!
     };
 
     this.blogService.addBlog(requestDto);
+  }
+
+  openImageSelector(): void {
+    this.imageSelectorService.open().subscribe((imageUrl) => {
+      if (imageUrl) {
+        this.addBlogFormGroup.patchValue({ featuredImageUrl: imageUrl });
+      }
+    });
   }
 }
 

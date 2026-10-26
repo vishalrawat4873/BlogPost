@@ -1,30 +1,151 @@
-<div class="d-flex align-items-center justify-content-between pe-2">
-  <h2 mat-dialog-title class="mb-0">Images</h2>
+<div class="d-flex align-items-center justify-content-between p-3 border-bottom">
+  <div class="d-flex align-items-center gap-2">
+    <mat-icon class="text-primary">photo_library</mat-icon>
+    <h2 mat-dialog-title class="m-0 fs-5 fw-bold">Image Selector</h2>
+  </div>
   <button mat-icon-button mat-dialog-close type="button" aria-label="Close">
     <mat-icon>close</mat-icon>
   </button>
 </div>
 
-<mat-dialog-content class="p-0">
-  <div class="row g-0">
-    <div class="col-12 col-md-8 p-4">
-      <!-- image list goes here, call select(image.url) on click -->
+<mat-dialog-content class="p-0 dialog-body">
+  <div class="row g-0 h-100">
+    <!-- Gallery Column (Left) -->
+    <div class="col-12 col-md-8 p-3 p-md-4 border-end gallery-column">
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <h5 class="m-0 fw-semibold">Uploaded Images</h5>
+        <span class="badge bg-secondary">{{ images().length }} images</span>
+      </div>
+
+      <!-- Loading State -->
+      @if (isLoadingImages()) {
+        <div class="d-flex flex-column align-items-center justify-content-center py-5">
+          <mat-spinner diameter="40"></mat-spinner>
+          <span class="text-muted mt-2">Loading images...</span>
+        </div>
+      }
+
+      <!-- Empty State -->
+      @if (!isLoadingImages() && images().length === 0) {
+        <div class="text-center py-5 text-muted">
+          <mat-icon style="font-size: 48px; width: 48px; height: 48px;">image_not_supported</mat-icon>
+          <p class="mt-2 mb-0">No images uploaded yet.</p>
+          <small>Use the upload form on the right to upload your first image.</small>
+        </div>
+      }
+
+      <!-- Images Grid -->
+      @if (!isLoadingImages() && images().length > 0) {
+        <div class="row g-3">
+          @for (image of images(); track image.id) {
+            <div class="col-6 col-sm-4 col-lg-3">
+              <div class="image-card" (click)="select(image.url)" [title]="'Click to select: ' + image.title">
+                <div class="image-thumbnail-container">
+                  <img [src]="image.url" [alt]="image.title" class="image-thumbnail" loading="lazy" />
+                  <div class="image-overlay">
+                    <mat-icon class="text-white">check_circle</mat-icon>
+                    <span class="text-white small fw-semibold">Select</span>
+                  </div>
+                </div>
+                <div class="image-card-caption">
+                  <span class="text-truncate d-block small fw-medium" [title]="image.title">{{ image.title }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
     </div>
 
-    <div class="col-12 col-md-4 p-4 bg-light">
-      <h4>Upload Image</h4>
-      <form>
-        <div class="mt-3">
-          <input type="file" class="form-control">
+    <!-- Upload Column (Right) -->
+    <div class="col-12 col-md-4 p-3 p-md-4 bg-light upload-column">
+      <h5 class="fw-semibold mb-3 d-flex align-items-center gap-2">
+        <mat-icon class="text-secondary">cloud_upload</mat-icon>
+        Upload Image
+      </h5>
+
+      <!-- Alerts -->
+      @if (errorMessage()) {
+        <div class="alert alert-danger py-2 px-3 small d-flex align-items-center gap-2 mb-3" role="alert">
+          <mat-icon class="small-icon">error_outline</mat-icon>
+          <span>{{ errorMessage() }}</span>
         </div>
-        <div class="mt-3">
-          <input type="text" class="form-control" placeholder="file name">
+      }
+
+      @if (successMessage()) {
+        <div class="alert alert-success py-2 px-3 small d-flex align-items-center gap-2 mb-3" role="alert">
+          <mat-icon class="small-icon">check_circle_outline</mat-icon>
+          <span>{{ successMessage() }}</span>
         </div>
-        <div class="mt-3">
-          <input type="text" class="form-control" placeholder="Title">
+      }
+
+      <!-- Form -->
+      <form (ngSubmit)="uploadImage()" #uploadForm="ngForm">
+        <!-- File Picker -->
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-secondary">Choose File</label>
+          <input
+            type="file"
+            class="form-control form-control-sm"
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            [disabled]="isUploading()"
+          />
+          <div class="form-text small">Max size: 10MB (JPG, PNG, WEBP, GIF)</div>
         </div>
-        <div class="mt-3">
-          <button type="submit" class="btn btn-dark">Upload</button>
+
+        <!-- Live Preview -->
+        @if (previewUrl()) {
+          <div class="mb-3 text-center">
+            <div class="preview-wrapper">
+              <img [src]="previewUrl()" alt="Preview" class="preview-image" />
+            </div>
+          </div>
+        }
+
+        <!-- File Name Input -->
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-secondary">File Name</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            placeholder="e.g. tech-blog-banner"
+            [ngModel]="fileName()"
+            (ngModelChange)="fileName.set($event)"
+            name="fileName"
+            [disabled]="isUploading()"
+          />
+        </div>
+
+        <!-- Title Input -->
+        <div class="mb-3">
+          <label class="form-label small fw-semibold text-secondary">Title / Alt Text</label>
+          <input
+            type="text"
+            class="form-control form-control-sm"
+            placeholder="e.g. Modern Web Development"
+            [ngModel]="title()"
+            (ngModelChange)="title.set($event)"
+            name="title"
+            [disabled]="isUploading()"
+          />
+        </div>
+
+        <!-- Upload Action Button -->
+        <div class="d-grid mt-4">
+          <button
+            type="submit"
+            class="btn btn-dark d-flex align-items-center justify-content-center gap-2"
+            [disabled]="!selectedFile() || isUploading()"
+          >
+            @if (isUploading()) {
+              <mat-spinner diameter="18" color="accent"></mat-spinner>
+              <span>Uploading...</span>
+            } @else {
+              <mat-icon class="small-icon">upload</mat-icon>
+              <span>Upload Image</span>
+            }
+          </button>
         </div>
       </form>
     </div>

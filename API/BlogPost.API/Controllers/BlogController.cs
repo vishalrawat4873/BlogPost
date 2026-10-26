@@ -1,7 +1,8 @@
 using BlogPost.Application.DTOs.Blog;
 using BlogPost.Application.Interfaces.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace BlogPost.API.Controllers
 {
@@ -10,10 +11,12 @@ namespace BlogPost.API.Controllers
     public class BlogController : ControllerBase
     {
         private readonly IBlogService _blogService;
+
         public BlogController(IBlogService blogService)
         {
             _blogService = blogService;
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
@@ -24,6 +27,17 @@ namespace BlogPost.API.Controllers
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var blog = await _blogService.GetByIdAsync(id);
+            if (blog == null)
+            {
+                return NotFound();
+            }
+            return Ok(blog);
+        }
+
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetByNameAsync(string name)
+        {
+            var blog = await _blogService.GetByNameAsync(name);
             if (blog == null)
             {
                 return NotFound();
@@ -60,6 +74,4 @@ namespace BlogPost.API.Controllers
             return Ok(await _blogService.CreateAsync(createBlogDto));
         }
     }
-
-
 }
